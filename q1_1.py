@@ -1,6 +1,8 @@
 #make imports
 import os
+import nltk
 from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
 
 def write_to_sample(file_read_path, file_write_path):
 
@@ -55,6 +57,23 @@ def tokenize_text(file_path):
 
     return tokenized_text
 
+#remove stopwords using the nltk stopwords corpus
+def remove_stopwords(word_array, file_path):
+
+    stop_words = set(stopwords.words('english'))
+
+    #store tokenized words except for the stop words
+    tokenized_words = []
+
+    for word in word_array:
+        if word not in stop_words:
+            tokenized_words.append(word)
+
+    with open(file_path, 'w') as f:
+        for word in tokenized_words:
+            f.write(word + "\n")
+
+    return tokenized_words
 
 #----------------------main---------------------#            
 
@@ -85,6 +104,14 @@ for file in os.listdir("text_files"):
     tokenized_text_array = tokenize_text(file_write_path)
 
     #update the sample file to add changes after tokenize function
+    if (sample_file_count <= 5):
+        write_to_sample(file_write_path, sample_file_write_path)
+
+    #init array to store tokenized words without the stop words
+    #get rid of stop words
+    sw_tokenized_text_array = remove_stopwords(tokenized_text_array, file_write_path)
+
+    #update the sample file to add changes after removing the stop words
     if (sample_file_count <= 5):
         write_to_sample(file_write_path, sample_file_write_path)
 
