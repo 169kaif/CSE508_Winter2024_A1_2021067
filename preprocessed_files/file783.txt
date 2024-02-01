@@ -1,0 +1,10 @@
+black
+color
+cable
+defeat
+product
+plug
+amp
+sound
+noise
+disappointed
