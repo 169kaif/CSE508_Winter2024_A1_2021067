@@ -1,6 +1,5 @@
 #make imports
 import os
-import nltk
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 
@@ -20,6 +19,12 @@ def write_to_sample(file_read_path, file_write_path):
         for line in file_data:
             f.write(line)
         f.write("\n\n\n")
+
+def write_wordlist2file(word_list, file_path):
+
+    with open(file_path, 'w') as f:
+        for word in word_list:
+            f.write(word + "\n")
 
 
 def lowercase_text(file_read_path, file_write_path):
@@ -51,9 +56,7 @@ def tokenize_text(file_path):
     tokenized_text = word_tokenize(text_to_tokenize)
 
     #write the tokenzied words to the file
-    with open(file_path, 'w') as temp_file:
-        for word in tokenized_text:
-            temp_file.write(word + "\n")
+    write_wordlist2file(tokenized_text, file_path)
 
     return tokenized_text
 
@@ -69,11 +72,22 @@ def remove_stopwords(word_array, file_path):
         if word not in stop_words:
             tokenized_words.append(word)
 
-    with open(file_path, 'w') as f:
-        for word in tokenized_words:
-            f.write(word + "\n")
+    write_wordlist2file(tokenized_words, file_path)
 
     return tokenized_words
+
+def remove_punctuation(word_array, file_path):
+
+    #init array to store words that are not punctuation
+    np_words = []
+
+    for word in word_array:
+        if (word.isalnum()):
+            np_words.append(word)
+
+    write_wordlist2file(np_words, file_path)
+
+    return np_words
 
 #----------------------main---------------------#            
 
@@ -112,6 +126,13 @@ for file in os.listdir("text_files"):
     sw_tokenized_text_array = remove_stopwords(tokenized_text_array, file_write_path)
 
     #update the sample file to add changes after removing the stop words
+    if (sample_file_count <= 5):
+        write_to_sample(file_write_path, sample_file_write_path)
+
+    #init array to store tokenized words without the stop words and punctuation marks
+    swp_tokenized_text_array = remove_punctuation(sw_tokenized_text_array, file_write_path)
+
+    #update the sample file to add changes after removing the punctuation marks
     if (sample_file_count <= 5):
         write_to_sample(file_write_path, sample_file_write_path)
 
