@@ -3,7 +3,7 @@ import os
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 
-#make sure nltk corpus has been downloaded before running
+#MAKE SURE NLTK CORPUS IS DOWNLOADED BEFORE RUNNING
 
 def write_to_sample(file_read_path, file_write_path):
 
@@ -84,8 +84,12 @@ def remove_punctuation(word_array, file_path):
     np_words = []
 
     for word in word_array:
-        if (word.isalnum()):
-            np_words.append(word)
+        new_word = ""
+        for char in word:
+            if (char.isalnum()):
+                new_word += char
+        if (len(new_word) > 0):
+            np_words.append(new_word)
 
     write_wordlist2file(np_words, file_path)
 
