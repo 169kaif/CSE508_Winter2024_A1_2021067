@@ -3,6 +3,8 @@ import os
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 
+#make sure nltk corpus has been downloaded before running
+
 def write_to_sample(file_read_path, file_write_path):
 
     #init list to store the file content
@@ -89,6 +91,17 @@ def remove_punctuation(word_array, file_path):
 
     return np_words
 
+def remove_blankspace(word_array, file_path):
+
+    #init array to store words without blankspace
+    bl_words = []
+
+    for word in word_array:
+        new_word = "".join(word.split())
+        bl_words.append(new_word)
+
+    write_wordlist2file(bl_words, file_path)
+
 #----------------------main---------------------#            
 
 sample_file_count = 1
@@ -133,6 +146,13 @@ for file in os.listdir("text_files"):
     swp_tokenized_text_array = remove_punctuation(sw_tokenized_text_array, file_write_path)
 
     #update the sample file to add changes after removing the punctuation marks
+    if (sample_file_count <= 5):
+        write_to_sample(file_write_path, sample_file_write_path)
+
+    #remove blank space
+    remove_blankspace(swp_tokenized_text_array, file_write_path)
+
+    #update the sample file to add changes after removing blankspace
     if (sample_file_count <= 5):
         write_to_sample(file_write_path, sample_file_write_path)
 
