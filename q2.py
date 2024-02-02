@@ -1,5 +1,7 @@
 import os
 import pickle
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
 
 def extract_file_id(file_name):
     return int(file_name[4:-4])
@@ -71,6 +73,76 @@ def and_or_query(postings_list, t1, t2):
 
     return answer_set
 
+#lowercase the text
+def lowercase_text(input_text):
+    return input_text.lower()
+
+#tokenize the text
+def tokenize_text(input_text):
+    return word_tokenize(input_text)
+
+#remove stop words from the text
+def remove_stopwords(input_text):
+
+    stop_words = set(stopwords.words('english'))
+
+    #store words except for the stop words
+    cleaned_words = []
+
+    for word in input_text:
+        if word not in stop_words:
+            cleaned_words.append(word)
+
+    return cleaned_words
+
+#remove punctuation marks
+def remove_punctuation(input_text):
+
+    #init array to store words that are not punctuation
+    np_words = []
+
+    for word in input_text:
+        new_word = ""
+        for char in word:
+            if (char.isalnum()):
+                new_word += char
+        if (len(new_word) > 0):
+            np_words.append(new_word)
+
+    return np_words
+
+#remove blank space tokens
+def remove_blankspace(input_text):
+
+    #init array to store words without blankspace
+    bl_words = []
+
+    for word in input_text:
+        new_word = "".join(word.split())
+        bl_words.append(new_word)
+
+    return bl_words
+
+#apply preprocessing functions to the text
+def preprocess_text(input_text):
+
+    #lowercase the text
+    input_text = lowercase_text(input_text)
+
+    #tokenize the text
+    input_text = tokenize_text(input_text)
+
+    #remove stopwords
+    input_text = remove_stopwords(input_text)
+
+    #remove punctuations
+    input_text = remove_punctuation(input_text)
+
+    #remove blank space tokens
+    input_text = remove_blankspace(input_text)
+
+    return input_text
+
 #----------------------main---------------------#
 
 #init postings list
@@ -101,3 +173,34 @@ dump_file_path = "./unigram_inverted_index.pk1"
 with open(dump_file_path, 'wb') as f:
     pickle.dump(postings_list, f)
 
+
+#---------query processing-----------#
+    
+#collect number of queries as input
+number_queries = int(input())
+
+for i in range(1, number_queries+1):
+
+    #input query
+    input_sequence = input()
+    operations = [operation.strip() for operation in input().split(',')]
+
+    #preprocess input_sequence
+    processed_sequence = preprocess_text(input_sequence)
+
+    #print the received query
+    print("")
+    print(f"Query {i}: ", end="")
+    for curr_ind in range(len(operations)):
+        print(processed_sequence[curr_ind], end=" ")
+        print(operations[curr_ind], end = " ")
+        if (curr_ind == len(operations)-1):
+            print(processed_sequence[curr_ind+1], end=" ")
+    print("")
+
+    #process the query
+    queried_files = set()
+    for curr_index, operation in enumerate(operations):
+
+
+        #NEED TO ADD FUNCTIONALITY FOR WHEN INSTEAD OF TWO WORDS, WE PROCESS ONE FILE SET AND QUERIED WORD FILE SET
