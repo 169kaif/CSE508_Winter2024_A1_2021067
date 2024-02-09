@@ -78,17 +78,20 @@ def preprocess_text(input_text):
 
 def phrase_check(file_ind, word_ind, seq_ind, processed_sequence, postings_list):
 
+    #if the entire sequence has been found, return true
     if (seq_ind == len(processed_sequence)):
         return True
-
+    
+    #retrieve curr_word
     curr_word = processed_sequence[seq_ind]
 
+    #check if the file does not contain that word
     if file_ind not in postings_list[curr_word]:
         return False
     else:
         if word_ind not in postings_list[curr_word][file_ind]:
             return False
-        else:
+        else: #check for next element if there is a proper match
             return phrase_check(file_ind, word_ind+1, seq_ind+1, processed_sequence, postings_list)
 
 
@@ -148,6 +151,7 @@ for i in range(1, number_queries+1):
     #words of the phrase
     first_word = processed_sequence[0]
 
+    #run phrase query for all the indices where the first word is found
     if first_word in postings_list.keys():
         for file in postings_list[first_word]:
             for word_ind in postings_list[first_word][file]:
