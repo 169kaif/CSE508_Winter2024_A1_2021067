@@ -76,6 +76,22 @@ def preprocess_text(input_text):
 
     return input_text
 
+def phrase_check(file_ind, word_ind, seq_ind, processed_sequence, postings_list):
+
+    if (seq_ind == len(processed_sequence)):
+        return True
+
+    curr_word = processed_sequence[seq_ind]
+
+    if file_ind not in postings_list[curr_word]:
+        return False
+    else:
+        if word_ind not in postings_list[curr_word][file_ind]:
+            return False
+        else:
+            return phrase_check(file_ind, word_ind+1, seq_ind+1, processed_sequence, postings_list)
+
+
 #----------------------main---------------------#
 
 #init postings list
@@ -128,8 +144,15 @@ for i in range(1, number_queries+1):
     #set to store the queried files
     queried_files = set()
 
-    #PROCESS QUERIES
-    
+    #store first word to identify the start of phrase and recursively check for other 
+    #words of the phrase
+    first_word = processed_sequence[0]
+
+    if first_word in postings_list.keys():
+        for file in postings_list[first_word]:
+            for word_ind in postings_list[first_word][file]:
+                if (phrase_check(file, word_ind+1, 1, processed_sequence, postings_list)):
+                    queried_files.add(file)
 
     print(f"Number of documents retrieved for query {i}: " + str(len(queried_files)))
     print(f"Names of the documents retrieved for query {i}: ", end="")
